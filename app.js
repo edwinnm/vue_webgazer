@@ -4,19 +4,36 @@ var app = new Vue({
     el: '#app',
     data: {
         selected: "",
-        photos: ["amazon", "ebay", "fb", "google", "laarbox", "medium", "twitter", "udemy"],
+        photos: ["angular", "laravel", "reactjs", "spring", "svelte", "vuejs"],
         coor: [],
+        recording: false,
+
+    },
+    mounted() {
+        //webgazer.showVideoPreview(false).showPredictionPoints(false);
+        webgazer.setGazeListener((data, timestamps) => {
+            console.log(data, timestamps)
+            try {
+                this.coor.push([data.x, data.y])
+            } catch (e) {
+                console.log("configurando");
+            }
+        }).begin()
+
 
     },
     methods: {
+
         startRecord() {
+            this.recording = true;
             this.coor = []
             setTimeout(() => {
                 this.download_csv(this.selected)
+                this.recording = false;
             }, 10000);
             this.coor = []
-
         },
+
         download_csv(name) {
             var csv = 'X,Y\n';
             this.coor.forEach(function(row) {

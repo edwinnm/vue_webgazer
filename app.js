@@ -3,37 +3,61 @@ window.saveDataACrossSessions = true;
 var app = new Vue({
     el: '#app',
     data: {
-        selected: "",
+        selected: "fondo",
         photos: ["angular", "laravel", "reactjs", "spring", "svelte", "vuejs"],
         coor: [],
         recording: false,
-
+        heatmap: null,
+        screenshot: false,
     },
     mounted() {
         //webgazer.showVideoPreview(false).showPredictionPoints(false);
-        webgazer.setGazeListener((data, timestamps) => {
-            console.log(data, timestamps)
+        webgazer.setGazeListener((points, timestamps) => {
+            //console.log(points, timestamps)
             try {
-                this.coor.push([data.x, data.y])
+                this.coor.push([points.x, points.y])
+                if (this.recording) {
+                    this.heatmap.addData({
+                        x: points.x,
+                        y: points.y,
+                        value: 1
+                    })
+                }
             } catch (e) {
-                console.log("configurando");
+                console.log(e);
             }
         }).begin()
-
-
     },
     methods: {
-
         startRecord() {
             this.recording = true;
             this.coor = []
+            this.heatmap = h337.create({ container: document.querySelector("#heatmapContainer") });
             setTimeout(() => {
+                // this.heatmap.setData({ data: [] });
                 this.download_csv(this.selected)
                 this.recording = false;
+
+                const webGazerContainer = document.getElementById("webgazerVideoContainer")
+                const style = webGazerContainer.getAttribute("style")
+                webGazerContainer.setAttribute("style", "display:none;")
+                this.screenshot = true;
+                setTimeout(() => {
+
+                    webGazerContainer.setAttribute("style", style)
+                    this.heatmap.setData({ data: [] });
+                    this.screenshot = false;
+                }, 5000)
+
             }, 10000);
             this.coor = []
-        },
 
+        },
+        restart() {
+            console.log("Se cargó");
+            if (this.selected != "fondo")
+                this.startRecord();
+        },
         download_csv(name) {
             var csv = 'X,Y\n';
             this.coor.forEach(function(row) {
@@ -47,7 +71,7 @@ var app = new Vue({
             hiddenElement.target = '_blank';
             hiddenElement.download = name + '.csv';
             hiddenElement.click();
-        }
+        },
     }
 })
 

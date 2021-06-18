@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -9,22 +9,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
 </head>
 
+
 <body>
     <div id="app">
-        <div v-if="!recording" class="container has-text-centered">
+        <div v-if="!recording && !screenshot" class="container has-text-centered">
             <h1 class="title">Web Gazer using Vue</h1>
             <div class="select">
-                <select v-model="selected" @change="startRecord">
+                <select v-model="selected">
                 <option disabled value="">Seleccione un elemento</option>
                 <option v-for="photo in photos" :value="photo">{{photo}}</option>
             </select>
             </div>
         </div>
-        <div>
-            <img class="image" :src=`./images/${selected}.png`>
+        <div id="heatmapContainer">
+            <img class="image" :src=`./images/${selected}.png` @load="restart">
         </div>
     </div>
 </body>
+<script src="heatmap.min.js"></script>
 <script src="webgazer.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 <script src="app.js"></script>

@@ -2,23 +2,23 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Gazer </title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Gazer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css" />
 </head>
-
 
 <body>
     <div id="app">
         <div v-if="!recording && !screenshot" class="container has-text-centered">
             <h1 class="title">Web Gazer using Vue</h1>
+            <h3 class="subtitle">{{ subtitle }}</h3>
             <div class="select">
                 <select v-model="selected">
-                <option disabled value="">Seleccione un elemento</option>
-                <option v-for="photo in photos" :value="photo">{{photo}}</option>
-            </select>
+            <option disabled value="">Seleccione un elemento</option>
+            <option v-for="photo in photos" :value="photo">{{photo}}</option>
+          </select>
             </div>
         </div>
         <div id="heatmapContainer">

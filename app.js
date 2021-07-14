@@ -1,7 +1,7 @@
 window.saveDataACrossSessions = true;
 
 var app = new Vue({
-    el: '#app',
+    el: "#app",
     data: {
         selected: "fondo",
         photos: ["angular", "laravel", "reactjs", "spring", "svelte", "vuejs"],
@@ -9,72 +9,84 @@ var app = new Vue({
         recording: false,
         heatmap: null,
         screenshot: false,
+        subtitle: "Calibra el Web Gazer o selecciona una página.",
     },
     mounted() {
         //webgazer.showVideoPreview(false).showPredictionPoints(false);
-        webgazer.setGazeListener((points, timestamps) => {
-            //console.log(points, timestamps)
-            try {
-                this.coor.push([points.x, points.y])
-                if (this.recording) {
-                    this.heatmap.addData({
-                        x: points.x,
-                        y: points.y,
-                        value: 1
-                    })
+        webgazer
+            .setGazeListener((points, timestamps) => {
+                //console.log(points, timestamps)
+                try {
+                    this.coor.push([points.x, points.y]);
+                    if (this.recording) {
+                        this.heatmap.addData({
+                            x: points.x,
+                            y: points.y,
+                            value: 1,
+                        });
+                    }
+                } catch (e) {
+                    console.log(e);
                 }
-            } catch (e) {
-                console.log(e);
-            }
-        }).begin()
+            })
+            .begin();
     },
     methods: {
         startRecord() {
             this.recording = true;
-            this.coor = []
-            this.heatmap = h337.create({ container: document.querySelector("#heatmapContainer") });
+            this.coor = [];
+            this.heatmap = h337.create({
+                container: document.querySelector("#heatmapContainer"),
+            });
             setTimeout(() => {
                 // this.heatmap.setData({ data: [] });
-                this.download_csv(this.selected)
+                this.download_csv(this.selected);
+
                 this.recording = false;
 
-                const webGazerContainer = document.getElementById("webgazerVideoContainer")
-                const style = webGazerContainer.getAttribute("style")
-                webGazerContainer.setAttribute("style", "display:none;")
-                this.screenshot = true;
+                const webGazerContainer = document.getElementById(
+                    "webgazerVideoContainer"
+                );
+                const style = webGazerContainer.getAttribute("style");
+                webGazerContainer.setAttribute("style", "display:none;");
+                let time = 7;
+                let interval = setInterval(() => {
+                    console.log(time);
+                    time--;
+                    this.subtitle = `Vamos toma una captura. Tienes ${time} segundos restantes.`;
+                    if (time == 0) {
+                        clearInterval(interval);
+                    }
+                }, 1000);
                 setTimeout(() => {
-
-                    webGazerContainer.setAttribute("style", style)
+                    webGazerContainer.setAttribute("style", style);
                     this.heatmap.setData({ data: [] });
                     this.screenshot = false;
-                }, 5000)
-
+                    this.subtitle = "Calibra el Web Gazer o selecciona una página.";
+                }, time * 1000);
             }, 10000);
-            this.coor = []
-
+            this.coor = [];
         },
         restart() {
             console.log("Se cargó");
-            if (this.selected != "fondo")
-                this.startRecord();
+            if (this.selected != "fondo") this.startRecord();
         },
         download_csv(name) {
-            var csv = 'X,Y\n';
+            var csv = "X,Y\n";
             this.coor.forEach(function(row) {
-                csv += row.join(',');
+                csv += row.join(",");
                 csv += "\n";
             });
 
             console.log(csv);
-            var hiddenElement = document.createElement('a');
-            hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-            hiddenElement.target = '_blank';
-            hiddenElement.download = name + '.csv';
+            var hiddenElement = document.createElement("a");
+            hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+            hiddenElement.target = "_blank";
+            hiddenElement.download = name + ".csv";
             hiddenElement.click();
         },
-    }
-})
-
+    },
+});
 
 //let datos = []
 // webgazer.setGazeListener((data, timestamps) => {
@@ -89,7 +101,6 @@ var app = new Vue({
 //     .begin()
 
 // fotos = ["amazon", "ebay", "fb", "google", "laarbox", "medium", "twitter", "udemy"]
-
 
 // let botton = document.querySelector("#btn");
 // let contador = 0
@@ -122,13 +133,10 @@ var app = new Vue({
 //     }, 10000);
 // })
 
-
-
 // fotos.forEach(element => {
 //     let select = document.querySelector("#select")
 //     let option = document.createElement('option');
 //     option.value = element
 //     select.appendChild(option)
-
 
 // });
